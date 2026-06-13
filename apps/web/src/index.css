@@ -1,1 +1,50 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand: #D4380D;
+  --color-brand-dark: #B02E0A;
+  --color-brand-light: #FDE8E0;
+  --color-accent: #F5A623;
+  --color-accent-light: #FEF3D5;
+  --color-cream: #FFF8F0;
+  --color-brown-900: #2D1810;
+  --color-brown-500: #8B6F5E;
+  --color-brown-100: #F0E8E0;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-brown-900);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.1); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.4s ease-out both;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.4s ease-out;
+}
