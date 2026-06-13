@@ -1,25 +1,48 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useCart } from '../context/CartContext'
 
-const MOCK_MENU = [
-  { id: '1', name: 'Chicken Adobo', price: 89, category: 'Rice Meals' },
-  { id: '2', name: 'Pork Sinigang', price: 99, category: 'Rice Meals' },
-  { id: '3', name: 'Beef Tapa', price: 109, category: 'Rice Meals' },
-  { id: '4', name: 'Sisig', price: 95, category: 'Rice Meals' },
-  { id: '5', name: 'Lechon Kawali', price: 115, category: 'Rice Meals' },
-  { id: '6', name: 'Java Rice', price: 25, category: 'Sides' },
-  { id: '7', name: 'Fried Lumpia', price: 35, category: 'Sides' },
-  { id: '8', name: 'Atchara', price: 15, category: 'Sides' },
-  { id: '9', name: 'Iced Tea', price: 35, category: 'Drinks' },
-  { id: '10', name: 'Buko Juice', price: 45, category: 'Drinks' },
-  { id: '11', name: "Sago't Gulaman", price: 35, category: 'Drinks' },
-]
+interface Product {
+  id: number
+  name: string
+  price: number
+  category: string
+}
 
-const categories = [...new Set(MOCK_MENU.map(item => item.category))]
+const categories = ['Rice Meals', 'Sides', 'Drinks']
 
 export default function MenuPage() {
-  const { items, addItem, updateQuantity, removeItem, totalAmount } = useCart()
+  const { items, addItem, updateQuantity, removeItem, totalAmount, clearCart } = useCart()
   const [cartOpen, setCartOpen] = useState(false)
+  const [products, setProducts] = useState<Product[]>([])
+  const [submitting, setSubmitting] = useState(false)
+  const [success, setSuccess] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then(r => r.json())
+      .then(setProducts)
+  }, [])
+
+  const placeOrder = async () => {
+    if (items.length === 0) return
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map(i => ({ productId: Number(i.id), name: i.name, price: i.price, quantity: i.quantity })),
+        }),
+      })
+      if (res.ok) {
+        clearCart()
+        setSuccess(true)
+        setTimeout(() => setSuccess(false), 3000)
+      }
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row" style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -34,11 +57,12 @@ export default function MenuPage() {
               {category}
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-              {MOCK_MENU.filter(item => item.category === category).map((item, i) => {
-                const cartItem = items.find(c => c.id === item.id)
+              {products.filter(item => item.category === category).map((item, i) => {
+                const id = String(item.id)
+                const cartItem = items.find(c => c.id === id)
                 return (
                   <div
-                    key={item.id}
+                    key={id}
                     className="animate-fade-in-up group flex flex-col overflow-hidden rounded-2xl border border-brown-100 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
                     style={{ animationDelay: (i * 80) + 'ms' }}
                   >
@@ -56,20 +80,20 @@ export default function MenuPage() {
                         {cartItem ? (
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => updateQuantity(item.id, cartItem.quantity - 1)}
+                              onClick={() => updateQuantity(id, cartItem.quantity - 1)}
                               className="flex h-9 w-9 items-center justify-center rounded-lg border border-brown-100 bg-white text-brown-900 transition hover:bg-brown-100 active:scale-95"
                             >
                               -
                             </button>
                             <span className="w-8 text-center text-sm font-semibold">{cartItem.quantity}</span>
                             <button
-                              onClick={() => updateQuantity(item.id, cartItem.quantity + 1)}
+                              onClick={() => updateQuantity(id, cartItem.quantity + 1)}
                               className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand text-white transition hover:bg-brand-dark active:scale-95"
                             >
                               +
                             </button>
                             <button
-                              onClick={() => removeItem(item.id)}
+                              onClick={() => removeItem(id)}
                               className="ml-auto text-xs font-medium text-red-400 transition hover:text-red-600"
                             >
                               Remove
@@ -78,7 +102,7 @@ export default function MenuPage() {
                         ) : (
                           <button
                             onClick={() =>
-                              addItem({ id: item.id, name: item.name, price: item.price })
+                              addItem({ id, name: item.name, price: item.price })
                             }
                             className="w-full rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark active:scale-[0.97]"
                           >
@@ -102,6 +126,9 @@ export default function MenuPage() {
             updateQuantity={updateQuantity}
             removeItem={removeItem}
             totalAmount={totalAmount}
+            placeOrder={placeOrder}
+            submitting={submitting}
+            success={success}
           />
         </div>
 
@@ -135,6 +162,9 @@ export default function MenuPage() {
                 updateQuantity={updateQuantity}
                 removeItem={removeItem}
                 totalAmount={totalAmount}
+                placeOrder={placeOrder}
+                submitting={submitting}
+                success={success}
               />
             </div>
           </>
@@ -149,17 +179,26 @@ function CartSidebar({
   updateQuantity,
   removeItem,
   totalAmount,
+  placeOrder,
+  submitting,
+  success,
 }: {
   items: { id: string; name: string; price: number; quantity: number }[]
   updateQuantity: (id: string, qty: number) => void
   removeItem: (id: string) => void
   totalAmount: number
+  placeOrder: () => Promise<void>
+  submitting: boolean
+  success: boolean
 }) {
   if (items.length === 0) {
     return (
       <div className="rounded-2xl border border-brown-100 bg-white p-8 text-center">
         <p className="text-3xl">🛒</p>
         <p className="mt-2 text-sm text-brown-500">Your cart is empty</p>
+        {success && (
+          <p className="mt-3 text-sm font-semibold text-green-600">Order placed!</p>
+        )}
       </div>
     )
   }
@@ -213,6 +252,13 @@ function CartSidebar({
           <span>Total</span>
           <span>₱{totalAmount}</span>
         </div>
+        <button
+          onClick={placeOrder}
+          disabled={submitting}
+          className="mt-4 w-full rounded-xl bg-brand py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-brand-dark active:scale-[0.97] disabled:opacity-50"
+        >
+          {submitting ? "Placing Order..." : "Place Order"}
+        </button>
       </div>
     </div>
   )

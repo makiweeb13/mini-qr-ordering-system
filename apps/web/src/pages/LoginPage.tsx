@@ -5,14 +5,14 @@ import { useAuth } from '../context/AuthContext'
 export default function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    const success = login(username, password)
+    const success = await login(email, password)
     if (success) {
       navigate('/admin', { replace: true })
     } else {
@@ -27,9 +27,6 @@ export default function LoginPage() {
         className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/95 p-8 shadow-2xl backdrop-blur-sm"
       >
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand text-2xl font-extrabold text-white shadow-lg">
-            S
-          </div>
           <h1
             className="text-2xl font-extrabold tracking-tight"
             style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: '#D4380D' }}
@@ -47,14 +44,14 @@ export default function LoginPage() {
 
         <div className="mb-4">
           <label className="mb-1.5 block text-sm font-semibold text-brown-900">
-            Username
+            Email
           </label>
           <input
-            type="text"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
             className="w-full rounded-xl border border-brown-100 bg-white px-4 py-2.5 text-sm text-brown-900 transition focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
-            placeholder="Enter username"
+            placeholder="admin@restaurant.com"
             required
           />
         </div>
@@ -81,7 +78,7 @@ export default function LoginPage() {
         </button>
 
         <p className="mt-4 text-center text-xs text-brown-500">
-          Demo: admin / admin123
+          Demo: admin@restaurant.com / admin123
         </p>
       </form>
     </div>

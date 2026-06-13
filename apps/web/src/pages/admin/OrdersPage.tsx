@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface OrderItem {
   id: string
@@ -17,46 +17,6 @@ interface Order {
   createdAt: string
 }
 
-const MOCK_ORDERS: Order[] = [
-  {
-    id: 'ORD-001',
-    customer: 'Juan Dela Cruz',
-    items: [
-      { id: '1', name: 'Chicken Adobo', quantity: 2, price: 89 },
-      { id: '9', name: 'Iced Tea', quantity: 1, price: 35 },
-    ],
-    total: 213,
-    status: 'pending',
-    paymentStatus: 'unpaid',
-    createdAt: '2 min ago',
-  },
-  {
-    id: 'ORD-002',
-    customer: 'Maria Santos',
-    items: [
-      { id: '5', name: 'Lechon Kawali', quantity: 1, price: 115 },
-      { id: '6', name: 'Java Rice', quantity: 2, price: 25 },
-      { id: '10', name: 'Buko Juice', quantity: 1, price: 45 },
-    ],
-    total: 210,
-    status: 'paid',
-    paymentStatus: 'paid',
-    createdAt: '15 min ago',
-  },
-  {
-    id: 'ORD-003',
-    customer: 'Pedro Reyes',
-    items: [
-      { id: '3', name: 'Beef Tapa', quantity: 1, price: 109 },
-      { id: '7', name: 'Fried Lumpia', quantity: 1, price: 35 },
-    ],
-    total: 144,
-    status: 'completed',
-    paymentStatus: 'paid',
-    createdAt: '1 hour ago',
-  },
-]
-
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
   paid: 'bg-blue-100 text-blue-800',
@@ -71,16 +31,34 @@ const paymentColors: Record<string, string> = {
 }
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState(MOCK_ORDERS)
+  const [orders, setOrders] = useState<Order[]>([])
   const [expanded, setExpanded] = useState<string | null>(null)
 
-  const updateStatus = (orderId: string, status: Order['status']) => {
+  useEffect(() => {
+    fetch('/api/orders')
+      .then(r => r.json())
+      .then(setOrders)
+  }, [])
+
+  const updateStatus = async (orderId: string, status: Order['status']) => {
+    const id = orderId.replace('ORD-', '')
+    await fetch(`/api/orders/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    })
     setOrders(prev =>
       prev.map(o => (o.id === orderId ? { ...o, status } : o))
     )
   }
 
-  const updatePayment = (orderId: string, paymentStatus: Order['paymentStatus']) => {
+  const updatePayment = async (orderId: string, paymentStatus: Order['paymentStatus']) => {
+    const id = orderId.replace('ORD-', '')
+    await fetch(`/api/orders/${id}/payment`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paymentStatus }),
+    })
     setOrders(prev =>
       prev.map(o => (o.id === orderId ? { ...o, paymentStatus } : o))
     )
@@ -100,7 +78,7 @@ export default function OrdersPage() {
           <thead>
             <tr className="border-b border-brown-100 bg-cream">
               <th className="px-4 py-3.5 font-semibold text-brown-500">Order</th>
-              <th className="px-4 py-3.5 font-semibold text-brown-500">Time</th>
+              <th className="px-4 py-3.5 font-semibold text-brown-500">Customer</th>
               <th className="px-4 py-3.5 font-semibold text-brown-500">Items</th>
               <th className="px-4 py-3.5 font-semibold text-brown-500">Total</th>
               <th className="px-4 py-3.5 font-semibold text-brown-500">Status</th>
@@ -116,7 +94,7 @@ export default function OrdersPage() {
                   className={'border-b border-brown-100 transition hover:bg-cream ' + (idx % 2 === 1 ? 'bg-cream/50' : 'bg-white')}
                 >
                   <td className="px-4 py-3.5 font-bold text-brown-900">{order.id}</td>
-                  <td className="px-4 py-3.5 text-brown-500">{order.createdAt}</td>
+                  <td className="px-4 py-3.5 text-brown-500">{order.customer}</td>
                   <td className="px-4 py-3.5">
                     <button
                       onClick={() =>

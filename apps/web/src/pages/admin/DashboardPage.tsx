@@ -1,11 +1,5 @@
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
-
-const statIcons: Record<string, string> = {
-  'Total Orders': '📋',
-  Pending: '⏳',
-  Completed: '✅',
-  'Revenue Today': '💰',
-}
 
 const statTints: Record<string, string> = {
   'Total Orders': 'bg-blue-50 border-blue-200',
@@ -16,12 +10,26 @@ const statTints: Record<string, string> = {
 
 export default function DashboardPage() {
   const { user } = useAuth()
+  const [totals, setTotals] = useState({ total: 0, pending: 0, completed: 0, revenue: 0 })
+
+  useEffect(() => {
+    fetch('/api/orders')
+      .then(r => r.json())
+      .then((orders: Array<{ status: string; total: number }>) => {
+        setTotals({
+          total: orders.length,
+          pending: orders.filter(o => o.status === 'pending' || o.status === 'paid' || o.status === 'preparing').length,
+          completed: orders.filter(o => o.status === 'completed').length,
+          revenue: orders.filter(o => o.status === 'completed').reduce((s, o) => s + o.total, 0),
+        })
+      })
+  }, [])
 
   const stats = [
-    { label: 'Total Orders', value: '24' },
-    { label: 'Pending', value: '8' },
-    { label: 'Completed', value: '14' },
-    { label: 'Revenue Today', value: '₱1,250' },
+    { label: 'Total Orders', value: String(totals.total) },
+    { label: 'Pending', value: String(totals.pending) },
+    { label: 'Completed', value: String(totals.completed) },
+    { label: 'Revenue Today', value: `\u20B1${totals.revenue.toLocaleString()}` },
   ]
 
   return (
@@ -33,7 +41,7 @@ export default function DashboardPage() {
         Dashboard
       </h1>
       <p className="mb-6 text-sm text-brown-500">
-        Welcome back, {user?.username}
+        Welcome back, {user?.name}
       </p>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">

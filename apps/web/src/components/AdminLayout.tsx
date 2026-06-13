@@ -5,8 +5,8 @@ export default function AdminLayout() {
   const { logout, user } = useAuth()
   const navigate = useNavigate()
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     navigate('/login')
   }
 
@@ -31,7 +31,7 @@ export default function AdminLayout() {
             >
               RestaurantMenu
             </h1>
-            <p className="text-xs text-brown-500">{user?.username}</p>
+            <p className="text-xs text-brown-500">{user?.name}</p>
           </div>
         </div>
 

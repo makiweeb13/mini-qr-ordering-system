@@ -1,43 +1,54 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 
 interface AuthUser {
-  username: string
+  email: string
+  name: string
   role: 'admin'
 }
 
 interface AuthContextType {
   user: AuthUser | null
   isAuthenticated: boolean
-  login: (username: string, password: string) => boolean
-  logout: () => void
+  login: (email: string, password: string) => Promise<boolean>
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-const ADMIN_CREDENTIALS = { username: 'admin', password: 'admin123' }
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(() => {
-    const stored = localStorage.getItem('auth_user')
-    return stored ? JSON.parse(stored) : null
-  })
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [loaded, setLoaded] = useState(false)
 
-  const login = (username: string, password: string): boolean => {
-    if (
-      username === ADMIN_CREDENTIALS.username &&
-      password === ADMIN_CREDENTIALS.password
-    ) {
-      const authedUser: AuthUser = { username, role: 'admin' }
-      setUser(authedUser)
-      localStorage.setItem('auth_user', JSON.stringify(authedUser))
-      return true
-    }
-    return false
+  useEffect(() => {
+    fetch('/api/me')
+      .then(r => r.ok ? r.json() : null)
+      .then(session => {
+        if (session?.user) {
+          setUser({ email: session.user.email, name: session.user.name, role: 'admin' })
+        }
+      })
+      .finally(() => setLoaded(true))
+  }, [])
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    const res = await fetch('/api/auth/sign-in/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+    if (!res.ok) return false
+    const session = await res.json()
+    setUser({ email: session.user.email, name: session.user.name, role: 'admin' })
+    return true
   }
 
-  const logout = () => {
+  const logout = async () => {
+    await fetch('/api/auth/sign-out', { method: 'POST' })
     setUser(null)
-    localStorage.removeItem('auth_user')
+  }
+
+  if (!loaded) {
+    return <div className="flex min-h-screen items-center justify-center text-brown-500">Loading...</div>
   }
 
   return (
