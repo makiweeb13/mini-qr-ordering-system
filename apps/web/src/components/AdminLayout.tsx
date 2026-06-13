@@ -29,7 +29,7 @@ export default function AdminLayout() {
               className="text-base font-bold tracking-tight"
               style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: '#D4380D' }}
             >
-              SarapQR
+              RestaurantMenu
             </h1>
             <p className="text-xs text-brown-500">{user?.username}</p>
           </div>
