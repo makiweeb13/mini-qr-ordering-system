@@ -1,0 +1,1 @@
+// Define types here that can be shared across the entire monorepo
