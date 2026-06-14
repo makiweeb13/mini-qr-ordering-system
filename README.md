@@ -83,6 +83,38 @@ This seeds the admin account (`admin@restaurant.com` / `admin123`) and starts bo
 
 > The root `dev` script is defined as: `pnpm --filter api seed && pnpm -r --parallel dev`
 
+## API Reference
+
+All API routes are proxied through Vite at `/api/*` in development and served from `localhost:3001` in production.
+
+### Authentication (Better Auth)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/sign-in/email` | Sign in with email & password |
+| POST | `/api/auth/sign-out` | Sign out current session |
+| GET | `/api/me` | Get current session user |
+
+### Products
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/products` | List all menu items |
+
+### Orders
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/orders` | List all orders (with items) |
+| POST | `/api/orders` | Create a new order |
+| PATCH | `/api/orders/:id/payment` | Update payment status |
+
+### Database GUI
+
+| Command | Description |
+|---------|-------------|
+| `pnpm prisma:studio` | Open Prisma Studio at `http://localhost:5555` |
+
 ## Access
 
 | Page | URL | Description |
