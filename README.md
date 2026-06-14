@@ -1,6 +1,6 @@
 # RestaurantMenu — QR Ordering System
 
-A full-stack QR menu ordering system with a Filipino-branded visual identity. Built with React, Express, Prisma, and MySQL.
+A full-stack QR menu ordering system built with Node.js, React, Express, Prisma, and MySQL.
 
 ## Tech Stack
 
@@ -8,6 +8,7 @@ A full-stack QR menu ordering system with a Filipino-branded visual identity. Bu
 |-------|------|
 | Frontend | React 19, React Router 7, Tailwind CSS 4, Vite 8 |
 | Backend | Express 5, TypeScript |
+| Runtime | Node.js >= 20 |
 | Auth | Better Auth (email/password) |
 | Database | MySQL via Prisma ORM |
 | Package Manager | pnpm |

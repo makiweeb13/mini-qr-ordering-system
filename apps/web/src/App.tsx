@@ -8,6 +8,7 @@ import MenuPage from './pages/MenuPage'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/admin/DashboardPage'
 import OrdersPage from './pages/admin/OrdersPage'
+import QRPrintPage from './pages/QRPrintPage'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<MenuPage />} />
           </Route>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/menu-qr" element={<QRPrintPage />} />
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminLayout />}>
               <Route path="/admin" element={<DashboardPage />} />

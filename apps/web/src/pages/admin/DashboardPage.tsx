@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
+import { QRCodeSVG } from 'qrcode.react'
 
 const statTints: Record<string, string> = {
   'Total Orders': 'bg-blue-50 border-blue-200',
@@ -7,6 +8,8 @@ const statTints: Record<string, string> = {
   Paid: 'bg-green-50 border-green-200',
   'Revenue Today': 'bg-emerald-50 border-emerald-200',
 }
+
+const menuUrl = typeof window !== 'undefined' ? window.location.origin + '/' : ''
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -64,6 +67,16 @@ export default function DashboardPage() {
             </p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-6 flex items-center gap-4 rounded-2xl border border-brown-100 bg-white p-5 shadow-sm">
+        <div className="rounded-lg border border-brown-100 bg-white p-2">
+          <QRCodeSVG value={menuUrl} size={80} level="M" />
+        </div>
+        <div>
+          <p className="text-sm font-bold text-brown-900">Scan to Order</p>
+          <p className="mt-0.5 text-xs text-brown-500">{menuUrl}</p>
+        </div>
       </div>
     </div>
   )

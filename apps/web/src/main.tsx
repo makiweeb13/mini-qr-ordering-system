@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
+import { BRAND_NAME } from './config/brand.ts'
+
+document.title = BRAND_NAME
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
