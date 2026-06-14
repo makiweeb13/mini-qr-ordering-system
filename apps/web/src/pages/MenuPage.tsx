@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useCart } from '../context/CartContext'
+import PaymentModal from '../components/PaymentModal'
 
 interface Product {
   id: number
@@ -15,7 +16,7 @@ export default function MenuPage() {
   const [cartOpen, setCartOpen] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
   const [submitting, setSubmitting] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const [orderForPayment, setOrderForPayment] = useState<{ id: string; total: number } | null>(null)
 
   useEffect(() => {
     fetch('/api/products')
@@ -35,13 +36,21 @@ export default function MenuPage() {
         }),
       })
       if (res.ok) {
-        clearCart()
-        setSuccess(true)
-        setTimeout(() => setSuccess(false), 3000)
+        const data = await res.json()
+        setOrderForPayment({ id: data.id, total: data.total })
       }
     } finally {
       setSubmitting(false)
     }
+  }
+
+  const handlePaymentSuccess = () => {
+    clearCart()
+    setOrderForPayment(null)
+  }
+
+  const handlePaymentClose = () => {
+    setOrderForPayment(null)
   }
 
   return (
@@ -128,7 +137,6 @@ export default function MenuPage() {
             totalAmount={totalAmount}
             placeOrder={placeOrder}
             submitting={submitting}
-            success={success}
           />
         </div>
 
@@ -164,12 +172,20 @@ export default function MenuPage() {
                 totalAmount={totalAmount}
                 placeOrder={placeOrder}
                 submitting={submitting}
-                success={success}
               />
             </div>
           </>
         )}
       </aside>
+
+      {orderForPayment && (
+        <PaymentModal
+          orderId={orderForPayment.id}
+          total={orderForPayment.total}
+          onSuccess={handlePaymentSuccess}
+          onClose={handlePaymentClose}
+        />
+      )}
     </div>
   )
 }
@@ -181,7 +197,6 @@ function CartSidebar({
   totalAmount,
   placeOrder,
   submitting,
-  success,
 }: {
   items: { id: string; name: string; price: number; quantity: number }[]
   updateQuantity: (id: string, qty: number) => void
@@ -189,16 +204,12 @@ function CartSidebar({
   totalAmount: number
   placeOrder: () => Promise<void>
   submitting: boolean
-  success: boolean
 }) {
   if (items.length === 0) {
     return (
       <div className="rounded-2xl border border-brown-100 bg-white p-8 text-center">
         <p className="text-3xl">🛒</p>
         <p className="mt-2 text-sm text-brown-500">Your cart is empty</p>
-        {success && (
-          <p className="mt-3 text-sm font-semibold text-green-600">Order placed!</p>
-        )}
       </div>
     )
   }

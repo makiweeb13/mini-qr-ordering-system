@@ -23,7 +23,7 @@ export default function DashboardPage() {
         const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
 
         setTotals({
-          total: orders.length,
+          total: orders.filter(o => new Date(o.createdAt) >= todayStart).length,
           unpaid: orders.filter(o => o.paymentStatus === 'unpaid').length,
           paid: orders.filter(o => o.paymentStatus === 'paid').length,
           revenue: orders
