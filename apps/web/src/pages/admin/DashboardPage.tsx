@@ -3,32 +3,37 @@ import { useAuth } from '../../context/AuthContext'
 
 const statTints: Record<string, string> = {
   'Total Orders': 'bg-blue-50 border-blue-200',
-  Pending: 'bg-amber-50 border-amber-200',
-  Completed: 'bg-green-50 border-green-200',
+  Unpaid: 'bg-amber-50 border-amber-200',
+  Paid: 'bg-green-50 border-green-200',
   'Revenue Today': 'bg-emerald-50 border-emerald-200',
 }
 
 export default function DashboardPage() {
   const { user } = useAuth()
-  const [totals, setTotals] = useState({ total: 0, pending: 0, completed: 0, revenue: 0 })
+  const [totals, setTotals] = useState({ total: 0, unpaid: 0, paid: 0, revenue: 0 })
 
   useEffect(() => {
     fetch('/api/orders')
       .then(r => r.json())
-      .then((orders: Array<{ status: string; total: number }>) => {
+      .then((orders: Array<{ paymentStatus: string; total: number; createdAt: string }>) => {
+        const today = new Date()
+        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+
         setTotals({
           total: orders.length,
-          pending: orders.filter(o => o.status === 'pending' || o.status === 'paid' || o.status === 'preparing').length,
-          completed: orders.filter(o => o.status === 'completed').length,
-          revenue: orders.filter(o => o.status === 'completed').reduce((s, o) => s + o.total, 0),
+          unpaid: orders.filter(o => o.paymentStatus === 'unpaid').length,
+          paid: orders.filter(o => o.paymentStatus === 'paid').length,
+          revenue: orders
+            .filter(o => o.paymentStatus === 'paid' && new Date(o.createdAt) >= todayStart)
+            .reduce((s, o) => s + o.total, 0),
         })
       })
   }, [])
 
   const stats = [
     { label: 'Total Orders', value: String(totals.total) },
-    { label: 'Pending', value: String(totals.pending) },
-    { label: 'Completed', value: String(totals.completed) },
+    { label: 'Unpaid', value: String(totals.unpaid) },
+    { label: 'Paid', value: String(totals.paid) },
     { label: 'Revenue Today', value: `\u20B1${totals.revenue.toLocaleString()}` },
   ]
 

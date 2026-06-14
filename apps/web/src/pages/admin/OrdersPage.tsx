@@ -12,16 +12,8 @@ interface Order {
   customer: string
   items: OrderItem[]
   total: number
-  status: 'pending' | 'paid' | 'preparing' | 'completed'
   paymentStatus: 'unpaid' | 'paid' | 'refunded'
   createdAt: string
-}
-
-const statusColors: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  paid: 'bg-blue-100 text-blue-800',
-  preparing: 'bg-purple-100 text-purple-800',
-  completed: 'bg-green-100 text-green-800',
 }
 
 const paymentColors: Record<string, string> = {
@@ -39,18 +31,6 @@ export default function OrdersPage() {
       .then(r => r.json())
       .then(setOrders)
   }, [])
-
-  const updateStatus = async (orderId: string, status: Order['status']) => {
-    const id = orderId.replace('ORD-', '')
-    await fetch(`/api/orders/${id}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status }),
-    })
-    setOrders(prev =>
-      prev.map(o => (o.id === orderId ? { ...o, status } : o))
-    )
-  }
 
   const updatePayment = async (orderId: string, paymentStatus: Order['paymentStatus']) => {
     const id = orderId.replace('ORD-', '')
@@ -81,7 +61,6 @@ export default function OrdersPage() {
               <th className="px-4 py-3.5 font-semibold text-brown-500">Customer</th>
               <th className="px-4 py-3.5 font-semibold text-brown-500">Items</th>
               <th className="px-4 py-3.5 font-semibold text-brown-500">Total</th>
-              <th className="px-4 py-3.5 font-semibold text-brown-500">Status</th>
               <th className="px-4 py-3.5 font-semibold text-brown-500">Payment</th>
               <th className="px-4 py-3.5 font-semibold text-brown-500">Actions</th>
             </tr>
@@ -106,23 +85,6 @@ export default function OrdersPage() {
                     </button>
                   </td>
                   <td className="px-4 py-3.5 font-semibold text-brown-900">₱{order.total}</td>
-                  <td className="px-4 py-3.5">
-                    <span className="inline-flex items-center gap-1">
-                      <span className={'inline-block h-1.5 w-1.5 rounded-full ' + (order.status === 'pending' ? 'bg-yellow-500' : order.status === 'paid' ? 'bg-blue-500' : order.status === 'preparing' ? 'bg-purple-500' : 'bg-green-500')} />
-                      <select
-                        value={order.status}
-                        onChange={e =>
-                          updateStatus(order.id, e.target.value as Order['status'])
-                        }
-                        className={'rounded-lg border-0 px-2 py-1 text-xs font-semibold ' + statusColors[order.status]}
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="paid">Paid</option>
-                        <option value="preparing">Preparing</option>
-                        <option value="completed">Completed</option>
-                      </select>
-                    </span>
-                  </td>
                   <td className="px-4 py-3.5">
                     <span className="inline-flex items-center gap-1.5">
                       <span className={'inline-block h-1.5 w-1.5 rounded-full ' + (order.paymentStatus === 'unpaid' ? 'bg-red-500' : order.paymentStatus === 'paid' ? 'bg-green-500' : 'bg-gray-500')} />
@@ -158,7 +120,7 @@ export default function OrdersPage() {
                 </tr>
                 {expanded === order.id && (
                   <tr>
-                    <td colSpan={7} className="bg-cream px-4 py-3">
+                    <td colSpan={6} className="bg-cream px-4 py-3">
                       <div className="rounded-xl border border-brown-100 bg-white p-4 text-sm">
                         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-brown-500">Order Items</p>
                         {order.items.map(item => (

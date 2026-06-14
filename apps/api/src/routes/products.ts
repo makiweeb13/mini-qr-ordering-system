@@ -1,13 +1,8 @@
 import { Router, type Router as RouterType } from "express";
-import { pool } from "../db.js";
+import { getAll } from "../controllers/products.controller.js";
 
 const router: RouterType = Router();
 
-router.get("/", async (_req, res) => {
-  const [rows] = await pool.query(
-    "SELECT id, name, price, category FROM products ORDER BY category, id"
-  );
-  res.json(rows);
-});
+router.get("/", getAll);
 
 export default router;

@@ -1,8 +1,11 @@
 import { betterAuth } from "better-auth";
-import { pool } from "../db.js";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { prisma } from "../prisma.js";
 
 export const auth = betterAuth({
-  database: pool,
+  database: prismaAdapter(prisma, {
+    provider: "mysql",
+  }),
   emailAndPassword: {
     enabled: true,
   },
