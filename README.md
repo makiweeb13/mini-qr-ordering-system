@@ -66,12 +66,26 @@ mysql -u root -e "CREATE DATABASE IF NOT EXISTS qr_ordering CHARACTER SET utf8mb
 
 ### 4. Apply the database schema
 
+Choose one of:
+
+**Option A — Prisma (recommended):**
+
 ```bash
 cd apps/api
 npx prisma db push
 ```
 
-> Alternatively, for a migration-based setup: `npx prisma migrate dev --name init`
+> For a migration-based setup: `npx prisma migrate dev --name init`
+
+**Option B — Plain SQL:**
+
+```bash
+mysql -u root < database.sql
+```
+
+This creates all tables and seeds the menu items directly. The admin user will still be created later by the dev seed script.
+
+Either way, Prisma will work alongside the SQL setup since the schema is identical.
 
 ### 5. Start the dev server
 
