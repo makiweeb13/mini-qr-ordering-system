@@ -182,3 +182,4 @@ mini-qr-ordering-system/
 - **Accent:** `#F5A623` (warm gold)
 - **Background:** Cream, brown accents
 - **Fonts:** Plus Jakarta Sans (headings), Inter (body)
+
