@@ -4,6 +4,7 @@ import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 import { auth } from "./lib/auth.js";
 import productsRouter from "./routes/products.js";
 import ordersRouter from "./routes/orders.js";
+import seedRouter from "./routes/seed.js";
 
 const app: Express = express();
 
@@ -27,6 +28,7 @@ app.get("/api/me", async (req, res) => {
   res.json(session);
 });
 
+app.use("/api/seed", seedRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/orders", ordersRouter);
 
