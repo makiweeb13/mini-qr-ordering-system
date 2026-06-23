@@ -1,4 +1,7 @@
 {
   "buildCommand": "npx prisma generate",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/[[...catchAll]]" }
+  ]
 }
