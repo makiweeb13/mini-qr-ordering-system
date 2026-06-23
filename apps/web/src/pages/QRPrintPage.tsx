@@ -41,7 +41,7 @@ export default function QRPrintPage() {
           font-family: 'Plus Jakarta Sans', sans-serif;
           font-size: 2.5rem;
           font-weight: 800;
-          color: #D4380D;
+          color: #0E7C7B;
           margin: 0 0 0.25rem;
         }
         .brand-desc {
@@ -65,7 +65,7 @@ export default function QRPrintPage() {
           padding: 0.75rem 2rem;
           border-radius: 0.75rem;
           border: none;
-          background: #D4380D;
+          background: #0E7C7B;
           color: #fff;
           font-size: 0.9rem;
           font-weight: 700;

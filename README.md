@@ -131,13 +131,19 @@ All API routes are proxied through Vite at `/api/*` in development and served fr
 
 ## Access
 
-| Page | URL | Description |
-|------|-----|-------------|
-| Menu | http://localhost:5173/ | Customer QR menu |
-| Login | http://localhost:5173/login | Admin login |
-| Dashboard | http://localhost:5173/admin | Admin dashboard |
-| Orders | http://localhost:5173/admin/orders | Order management |
-| Prisma Studio | http://localhost:5555/ | Database GUI (run `pnpm prisma:studio`) |
+| Page | Local URL | Live URL | Description |
+|------|-----------|----------|-------------|
+| Menu | http://localhost:5173/ | https://mini-qr-ordering-system-web.vercel.app/ | Customer QR menu |
+| Login | http://localhost:5173/login | https://mini-qr-ordering-system-web.vercel.app/login | Admin login |
+| Dashboard | http://localhost:5173/admin | https://mini-qr-ordering-system-web.vercel.app/admin | Admin dashboard |
+| Orders | http://localhost:5173/admin/orders | https://mini-qr-ordering-system-web.vercel.app/admin/orders | Order management |
+| Prisma Studio | http://localhost:5555/ | — | Database GUI (run `pnpm prisma:studio`) |
+
+## Live Demo
+
+- **Frontend:** https://mini-qr-ordering-system-web.vercel.app/
+- **Seed (one-time):** https://mini-qr-ordering-system-api.vercel.app/api/seed
+- **API:** https://mini-qr-ordering-system-api.vercel.app
 
 ## Admin Credentials
 

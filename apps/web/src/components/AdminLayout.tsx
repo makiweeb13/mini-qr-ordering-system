@@ -28,7 +28,7 @@ export default function AdminLayout() {
           <div>
             <h1
               className="text-base font-bold tracking-tight"
-              style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: '#D4380D' }}
+              style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--color-brand)' }}
             >
               {BRAND_NAME}
             </h1>
@@ -41,7 +41,7 @@ export default function AdminLayout() {
           end
           className={linkClass}
           style={({ isActive }) => ({
-            backgroundColor: isActive ? '#D4380D' : undefined,
+            backgroundColor: isActive ? 'var(--color-brand)' : undefined,
           })}
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -53,7 +53,7 @@ export default function AdminLayout() {
           to="/admin/orders"
           className={linkClass}
           style={({ isActive }) => ({
-            backgroundColor: isActive ? '#D4380D' : undefined,
+            backgroundColor: isActive ? 'var(--color-brand)' : undefined,
           })}
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -65,7 +65,7 @@ export default function AdminLayout() {
           to="/menu-qr"
           className={linkClass}
           style={({ isActive }) => ({
-            backgroundColor: isActive ? '#D4380D' : undefined,
+            backgroundColor: isActive ? 'var(--color-brand)' : undefined,
           })}
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

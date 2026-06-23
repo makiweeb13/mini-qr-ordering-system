@@ -12,7 +12,7 @@ export default function CustomerLayout() {
           <Link
             to="/"
             className="text-xl font-extrabold tracking-tight"
-            style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: '#D4380D' }}
+            style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--color-brand)' }}
           >
             Restaurant<span className="text-accent">Menu</span>
           </Link>
@@ -22,7 +22,7 @@ export default function CustomerLayout() {
               <span
                 key={cartCount}
                 className="absolute -right-2 -top-2 flex h-5 w-5 animate-bounce-in items-center justify-center rounded-full text-xs text-white"
-                style={{ backgroundColor: '#D4380D' }}
+                style={{ backgroundColor: 'var(--color-brand)' }}
               >
                 {cartCount}
               </span>

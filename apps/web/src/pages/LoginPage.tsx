@@ -29,7 +29,7 @@ export default function LoginPage() {
         <div className="mb-6 text-center">
           <h1
             className="text-2xl font-extrabold tracking-tight"
-            style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: '#D4380D' }}
+            style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', color: 'var(--color-brand)' }}
           >
             Admin Login
           </h1>
